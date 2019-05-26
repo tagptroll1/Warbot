@@ -1,7 +1,6 @@
 import discord
 
-from commands.CommandManager import CommandManager
-from commands.GreetCommand import GreetCommand
+from commands import CommandManager, GreetCommand, JoinCommand
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -12,8 +11,17 @@ Base = declarative_base()
 commandManager = CommandManager()
 
 commandManager.addCommand(GreetCommand("greet"))
+commandManager.addCommand(JoinCommand("join"))
 
 commandManager.setPrefix("!")
+
+engine = create_engine('sqlite:///data/database/warbot.db')
+
+Base.metadata.bind = engine
+
+DBSession = sessionmaker(bind=engine)
+
+session = DBSession()
 
 
 class MyClient(discord.Client):
@@ -27,19 +35,12 @@ class MyClient(discord.Client):
                 await command.execute(message)
 
     async def on_ready(self):
-        engine = create_engine('sqlite:///data/database/servers.db')
-
-        Base.metadata.bind = engine
-
-        DBSession = sessionmaker(bind=engine)
-
-        session = DBSession()
 
         for guild in client.guilds:
             print(guild.name)
             # Insert a Server into the server table
             new_server = Server(id=guild.id, faction="NULL")
-            session.add(new_server)
+            session.merge(new_server)
             session.commit()
 
 
