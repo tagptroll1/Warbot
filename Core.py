@@ -1,21 +1,29 @@
 import discord
-import sqlite3
 
-con = sqlite3.connect("example.db")
+from CommandManager import CommandManager
+from GreetCommand import GreetCommand
 
-# Create table
-con.execute('''CREATE TABLE stocks
-             (date text, trans text, symbol text, qty real, price real)''')
+# con = sqlite3.connect("example.db")
+#
+# # Create table
+# con.execute('''CREATE TABLE stocks
+#              (date text, trans text, symbol text, qty real, price real)''')
+#
+# # Insert a row of data
+# con.execute("INSERT INTO stocks VALUES ('2006-01-05','BUY','RHAT',100,35.14)")
+#
+# # Save (commit) the changes
+# con.commit()
+#
+# # We can also close the connection if we are done with it.
+# # Just be sure any changes have been committed or they will be lost.
+# con.close()
 
-# Insert a row of data
-con.execute("INSERT INTO stocks VALUES ('2006-01-05','BUY','RHAT',100,35.14)")
+commandManager = CommandManager()
 
-# Save (commit) the changes
-con.commit()
+commandManager.addCommand(GreetCommand("greet"))
 
-# We can also close the connection if we are done with it.
-# Just be sure any changes have been committed or they will be lost.
-con.close()
+commandManager.setPrefix("!")
 
 
 class MyClient(discord.Client):
@@ -24,21 +32,9 @@ class MyClient(discord.Client):
         print('Logged on as {0}!'.format(self.user))
 
     async def on_message(self, message):
-        if message.author == client.user:
-            return
-
-        if message.content.startswith('$hello'):
-            await message.channel.send('Hello!')
-
-        if message.content.startswith('$greet'):
-            channel = message.channel
-            await channel.send('Say hello!')
-
-            def check(m):
-                return m.content == 'hello' and m.channel == channel
-
-            msg = await client.wait_for('message', check=check)
-            await channel.send('Hello {.author}!'.format(msg))
+        for command in commandManager.coms:
+            if message.content.startswith(commandManager.prefix + command.name):
+                await command.execute(message)
 
     async def on_ready(self):
         for guild in client.guilds:
