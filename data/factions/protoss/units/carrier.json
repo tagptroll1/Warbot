@@ -18,8 +18,7 @@
     ],
     "targets": [
         "GROUND",
-		"AIR",
-		"SPACE"
+		"AIR"
     ],
-	"mobility": "SPACE"
+	"mobility": "AIR"
 }
