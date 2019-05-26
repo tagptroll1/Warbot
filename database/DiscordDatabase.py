@@ -1,16 +1,22 @@
+from sqlalchemy import Column, Integer, String
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import create_engine
 
-# con = sqlite3.connect("example.db")
-#
-# # Create table
-# con.execute('''CREATE TABLE stocks
-#              (date text, trans text, symbol text, qty real, price real)''')
-#
-# # Insert a row of data
-# con.execute("INSERT INTO stocks VALUES ('2006-01-05','BUY','RHAT',100,35.14)")
-#
-# # Save (commit) the changes
-# con.commit()
-#
-# # We can also close the connection if we are done with it.
-# # Just be sure any changes have been committed or they will be lost.
-# con.close()
+Base = declarative_base()
+
+
+class Server(Base):
+    __tablename__ = 'server'
+    # Here we define columns for the table person
+    # Notice that each column is also a normal Python instance attribute.
+    id = Column(Integer, primary_key=True)
+    faction = Column(String(250), nullable=True)
+
+
+# Create an engine that stores data in the local directory's
+# sqlalchemy_example.db file.
+engine = create_engine('sqlite:///data/database/servers.db')
+
+# Create all tables in the engine. This is equivalent to "Create Table"
+# statements in raw SQL.
+Base.metadata.create_all(engine)

@@ -2,6 +2,12 @@ import discord
 
 from commands.CommandManager import CommandManager
 from commands.GreetCommand import GreetCommand
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from database.DiscordDatabase import Server
+
+Base = declarative_base()
 
 commandManager = CommandManager()
 
@@ -21,8 +27,20 @@ class MyClient(discord.Client):
                 await command.execute(message)
 
     async def on_ready(self):
+        engine = create_engine('sqlite:///data/database/servers.db')
+
+        Base.metadata.bind = engine
+
+        DBSession = sessionmaker(bind=engine)
+
+        session = DBSession()
+
         for guild in client.guilds:
             print(guild.name)
+            # Insert a Server into the server table
+            new_server = Server(id=guild.id, faction="NULL")
+            session.add(new_server)
+            session.commit()
 
 
 client = MyClient()
