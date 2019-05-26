@@ -1,7 +1,7 @@
 import discord
 
-from CommandManager import CommandManager
-from GreetCommand import GreetCommand
+from commands.CommandManager import CommandManager
+from commands.GreetCommand import GreetCommand
 
 # con = sqlite3.connect("example.db")
 #

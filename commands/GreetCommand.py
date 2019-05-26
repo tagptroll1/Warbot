@@ -1,4 +1,4 @@
-from Command import Command
+from commands.Command import Command
 
 
 class GreetCommand(Command):
