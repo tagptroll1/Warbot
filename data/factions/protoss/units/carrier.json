@@ -1,0 +1,25 @@
+{
+    "species": "Protoss",
+    "costs": {
+        "minerals": 350,
+        "vespene": 250
+    },
+    "stats": {
+        "health": 300,
+        "shields": 150,
+        "armor": 2,
+        "dps": 37.4,
+        "speed": 2.62
+    },
+    "attributes": [
+        "ARMORED",
+        "MECHANICAL",
+		"MASSIVE"
+    ],
+    "targets": [
+        "GROUND",
+		"AIR",
+		"SPACE"
+    ],
+	"mobility": "SPACE"
+}
