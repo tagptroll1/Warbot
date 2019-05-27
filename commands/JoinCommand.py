@@ -1,6 +1,5 @@
 from commands.Command import Command
 from database.DiscordDatabase import User
-from Core import session
 
 
 class JoinCommand(Command):
@@ -24,6 +23,6 @@ class JoinCommand(Command):
             await message.channel.send(
                 "You have successfully joined the " + message.content.split(" ")[1] + "!"
             )
-            session.merge(user)
-            session.commit()
+            self.client.session.merge(user)
+            self.client.session.commit()
         return
