@@ -105,26 +105,17 @@ async def join(ctx):
         session.merge(user)
         session.commit()
 
-        # TODO: Simplify this somehow
-        if fac == "terran":
-            session.merge(Terran(id=ctx.message.author.id))
-            server.terran += 1
-            session.commit()
-            await ctx.channel.send("You have successfully joined the Terran!")
+        races = {
+            "terran": Terran,
+            "protoss": Protoss,
+            "zerg": Zerg,
+        }
 
-        elif fac == "protoss":
-            session.merge(Protoss(id=ctx.message.author.id))
-            server.protoss += 1
+        if fac in races:
+            session.merge(races[fac](id=ctx.author.id))
+            setattr(server, fac, getattr(server, fac) + 1)
             session.commit()
-            await ctx.channel.send("You have successfully joined the Protoss!")
-
-        elif fac == "zerg":
-            session.merge(Zerg(id=ctx.message.author.id))
-            server.zerg += 1
-            session.commit()
-            await ctx.channel.send("You have successfully joined the Zerg!")
-
-    return
+            await ctx.send(f"You have successfully joined the {fac.title()}")
 
 
 @client.command()
