@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
+import Config
 
 Base = declarative_base()
 
@@ -58,6 +59,6 @@ class Zerg(Base):
     vespene = Column(Integer, name='Vespene', nullable=False, default=0)
 
 
-engine = create_engine('sqlite:///data/database/warbot.db')
+engine = create_engine(Config.db_dir)
 
 Base.metadata.create_all(engine)

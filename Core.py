@@ -3,15 +3,16 @@ from database.DiscordDatabase import *
 from discord.ext import commands
 import discord
 from sqlalchemy import exists
+import Config
 
 Base = declarative_base()
-engine = create_engine('sqlite:///data/database/warbot.db')
+engine = create_engine(Config.db_dir)
 conn = engine.connect()
 Base.metadata.bind = engine
 db_session = sessionmaker(bind=engine)
 session = db_session()
 
-client = commands.Bot(command_prefix="!")
+client = commands.Bot(command_prefix=Config.command_prefix)
 
 
 @client.event
@@ -30,7 +31,7 @@ async def on_member_join(ctx):
     ret = session.query(exists().where(User.id == ctx.member.id)).scalar()
 
     if ret:
-        print("A valid civible member has joined!")
+        print("A valid {} member has joined!".format(Config.game_name))
         user = session.query(User).filter_by(id=ctx.member.id).one()
 
         if user.faction == "terran":
@@ -41,7 +42,7 @@ async def on_member_join(ctx):
             server.zerg += 1
 
     else:
-        print("Joining member does not play civible!")
+        print("Joining member does not play {}!".format(Config.game_name))
 
 
 @client.event
@@ -50,7 +51,7 @@ async def on_member_leave(ctx):
     ret = session.query(exists().where(User.id == ctx.member.id)).scalar()
 
     if ret:
-        print("A valid civible member has left!")
+        print("A valid {} member has left!".format(Config.game_name))
         user = session.query(User).filter_by(id=ctx.member.id).one()
 
         if user.faction == "terran":
@@ -61,7 +62,7 @@ async def on_member_leave(ctx):
             server.zerg -= 1
 
     else:
-        print("Leaving member does not play civible!")
+        print("Leaving member does not play {}!".format(Config.game_name))
 
 
 @client.command()
@@ -104,6 +105,7 @@ async def join(ctx):
         session.merge(user)
         session.commit()
 
+        # TODO: Simplify this somehow
         if fac == "terran":
             session.merge(Terran(id=ctx.message.author.id))
             server.terran += 1
@@ -137,7 +139,7 @@ async def info(ctx):
 
         emb = discord.Embed(
             title="Terran",
-            color=discord.Color.blue()
+            color=Config.terran_color
         )
 
         emb.add_field(name="ID", value=str(ctx.message.author.id), inline=False)
@@ -150,7 +152,7 @@ async def info(ctx):
 
         emb = discord.Embed(
             title="Protoss",
-            color=discord.Color.gold()
+            color=Config.protoss_color
         )
 
         emb.add_field(name="ID", value=str(ctx.message.author.id), inline=False)
@@ -163,7 +165,7 @@ async def info(ctx):
 
         emb = discord.Embed(
             title="Zerg",
-            color=discord.Color.purple()
+            color=Config.zerg_color
         )
 
         emb.add_field(name="ID", value=str(ctx.message.author.id), inline=False)
@@ -202,8 +204,8 @@ async def scout(ctx):
         # await ctx.send("The {} have chosen to let this server be.".format(user_faction))
 
     else:
-        await ctx.send("This server is currently controlled by the " + controlling_faction + "!")
+        await ctx.send("This server is currently controlled by the {}!".format(controlling_faction))
     return
 
 
-client.run(open("token.txt", "r").read())
+client.run(open(Config.token_dir, "r").read())
