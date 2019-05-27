@@ -19,10 +19,6 @@ class User(Base):
     faction = Column(String(250), nullable=True)
 
 
-# Create an engine that stores data in the local directory's
-# sqlalchemy_example.db file.
 engine = create_engine('sqlite:///data/database/warbot.db')
 
-# Create all tables in the engine. This is equivalent to "Create Table"
-# statements in raw SQL.
 Base.metadata.create_all(engine)

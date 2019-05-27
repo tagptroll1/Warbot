@@ -17,18 +17,18 @@ class MyClient(discord.Client):
 
         self.commandManager = CommandManager()
 
-        self.commandManager.addCommand(GreetCommand("greet", self))
-        self.commandManager.addCommand(JoinCommand("join", self))
+        self.commandManager.add_command(GreetCommand("greet", self))
+        self.commandManager.add_command(JoinCommand("join", self))
 
-        self.commandManager.setPrefix("!")
+        self.commandManager.set_prefix("!")
 
         self.engine = create_engine('sqlite:///data/database/warbot.db')
 
         self.Base.metadata.bind = self.engine
 
-        DBSession = sessionmaker(bind=self.engine)
+        db_session = sessionmaker(bind=self.engine)
 
-        self.session = DBSession()
+        self.session = db_session()
 
     async def on_message(self, message):
         for command in self.commandManager.coms:

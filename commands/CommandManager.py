@@ -5,8 +5,8 @@ class CommandManager:
     coms = []
     prefix = ""
 
-    def addCommand(self, command):
+    def add_command(self, command):
         self.coms.append(command)
 
-    def setPrefix(self, prefix):
+    def set_prefix(self, prefix):
         self.prefix = prefix
