@@ -30,10 +30,6 @@ class MyClient(discord.Client):
 
         self.session = DBSession()
 
-
-    async def on_ready(self):
-        print('Logged on as {0}!'.format(self.user))
-
     async def on_message(self, message):
         for command in self.commandManager.coms:
             if message.content.startswith(self.commandManager.prefix + command.name):
